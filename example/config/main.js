@@ -12,6 +12,11 @@ export default function () {
               module: 'home',
               controller: 'home',
               action: 'index'
+            },
+            'GET /login': {
+              module: 'home',
+              controller: 'home',
+              action: 'login'
             }
           }
         },

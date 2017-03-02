@@ -1,3 +1,98 @@
+import Validator from 'Validator';
+import each from 'async/each';
+
 export class Model {
+
+  _errors = {};
+
+  attributes() {
+    return Object.getOwnPropertyNames(this).filter(attr => attr[0] !== '_');
+  }
+
+  afterValidate() {
+
+  }
+
+  attributeLabels() {
+
+  }
+
+  addError(attr, rule, message) {
+    if (!this._errors[attr]) {
+      this._errors[attr] = {};
+    }
+    this._errors[attr][rule] = message;
+  }
+
+  beforeValidate() {
+
+  }
+
+  clearErrors() {
+
+  }
+
+  isBoolean(attr) {
+    return typeof this[attr] === 'boolean';
+  }
+
+  required(attr) {
+    return this[attr] !== undefined && this[attr] !== null;
+  }
+
+  rules() {
+    return [];
+  }
+
+  async validate() {
+    return new Promise(resolve => {
+      each(this.rules(), (rule, callback) => {
+        each(rule[0], async(attr, $callback) => {
+          if (
+            (this[rule[1]] && !await this[rule[1]](attr))
+            || (!this[rule[1]] && Validator[rule[1]] && !Validator[rule[1]](this[attr] + '', rule[2] || {}))
+          ) {
+            this.addError(attr, rule[1], rule[2].message);
+          }
+          $callback();
+        }, callback);
+      }, (err) => {
+        if (err) {
+          throw new Error(err);
+        }
+        resolve();
+      });
+    });
+  }
+
+  load(values) {
+    this.attributes().forEach(attr => {
+      if (values[attr]) {
+        this.setAttribute(attr, values[attr]);
+      }
+    });
+  }
+
+  getValidators() {
+
+  }
+
+  getErrors() {
+    return this._errors;
+  }
+
+  hasErrors() {
+    return Object.keys(this._errors).length;
+  }
+
+  hasAttr(attr) {
+    return this[attr] !== undefined && typeof this[attr] !== 'function'
+  }
+
+  setAttribute(attr, value) {
+    if (this.hasAttr(attr)) {
+      this[attr] = value;
+    }
+  }
 
 }
