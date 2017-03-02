@@ -5,7 +5,8 @@ export class Response extends Component {
   render(response, $data) {
     let result = merge({
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Content-Encoding': 'UTF-8'
       },
       content: '',
       state: 200
