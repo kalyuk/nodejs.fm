@@ -17,6 +17,8 @@ export default function () {
               module: 'home',
               controller: 'home',
               action: 'login'
+            },
+            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {
             }
           }
         },

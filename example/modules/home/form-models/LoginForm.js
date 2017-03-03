@@ -10,17 +10,16 @@ export class LoginForm extends Model {
     return [
       [['email', 'password'], 'required', {message: 'can\'t be blank'}],
       [['email'], 'isEmail', {message: 'wrong email'}],
-      [['email'], 'isEmailAsync', {message: 'wrong email'}],
+      [['email'], 'isCheckAsync', {message: 'wrong async function'}],
       [['rememberMe'], 'isBoolean', {message: 'only boolean'}]
     ];
   }
 
-  async isEmailAsync() {
+  async isCheckAsync() {
     return new Promise(resolve => {
       setTimeout(() => {
-        console.log('valid');
-        resolve(false);
-      }, 30000);
+        resolve(true);
+      });
     });
   }
 

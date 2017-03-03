@@ -18,9 +18,13 @@ export async function loginAction() {
 
   await $loginForm.validate();
 
-
-  return {
-    content: $loginForm.getErrors()
+  if ($loginForm.hasErrors()) {
+    return {
+      content: $loginForm.getErrors()
+    };
   }
+
+  return {}
+
 
 }
