@@ -24,7 +24,8 @@ export async function loginAction() {
     };
   }
 
-  return {}
-
+  return {
+    content: 'data'
+  };
 
 }

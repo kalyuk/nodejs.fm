@@ -20,12 +20,13 @@ export class Module extends Component {
     return this.__controllers[name];
   }
 
-  async runAction({controller, action, params}) {
+  async runAction(route) {
+    let {controller, action} = route;
     let $controller = this.getController(controller);
     if (!$controller[action + 'Action']) {
       throw new Error(`Action "${action + 'Action'}" in controller "${controller}" not found`);
     }
-    return await $controller[action + 'Action'](params, this);
+    return await $controller[action + 'Action'](route, this);
   }
 
 }
