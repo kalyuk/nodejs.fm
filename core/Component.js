@@ -1,8 +1,8 @@
 export class Component {
-  constructor(config = {}, application) {
+  constructor(config = {}) {
     Object.keys(config).forEach(propertyName => {
       this[propertyName] = config[propertyName];
     });
-    this.app = application;
+    this.app = global.APP;
   }
 }

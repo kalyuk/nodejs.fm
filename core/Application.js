@@ -3,6 +3,7 @@ import {WebServer} from './WebServer';
 import {Router} from './Router';
 import {Response} from './Response';
 import {ErrorHandler} from './ErrorHandler';
+import {Database} from './Database';
 
 export class Application {
   __webServer = null;
@@ -13,7 +14,8 @@ export class Application {
     WebServer,
     Router,
     Response,
-    ErrorHandler
+    ErrorHandler,
+    Database
   };
 
   config = {
@@ -28,6 +30,7 @@ export class Application {
   constructor(configPath) {
     this.parseArgs();
     this.loadConfig(configPath);
+    global.APP = this;
     this.router = this.getComponent('Router');
     this.isDevelopment = this.args.env === 'development';
   }
@@ -56,7 +59,6 @@ export class Application {
     if (!this.__webServer) {
       this.__webServer = this.getComponent('WebServer');
       this.__webServer.onRequest(this.router.handleRequest.bind(this.router));
-
     }
   }
 
@@ -71,7 +73,7 @@ export class Application {
     }
     if (!this.__components[name]) {
       if (typeof this.components[name] === 'function') {
-        this.__components[name] = new this.components[name](this.config.components[name], this);
+        this.__components[name] = new this.components[name](this.config.components[name]);
       }
     }
 
@@ -85,7 +87,7 @@ export class Application {
 
     if (!this.__modules[name]) {
       if (this.config.modules[name] && typeof this.config.modules[name].Instance === 'function') {
-        this.__modules[name] = new this.config.modules[name].Instance(this.config.modules[name], this);
+        this.__modules[name] = new this.config.modules[name].Instance(this.config.modules[name]);
       }
     }
 

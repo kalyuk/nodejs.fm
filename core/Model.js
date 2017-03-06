@@ -5,8 +5,12 @@ export class Model {
 
   _errors = {};
 
+  constructor() {
+    this.app = global.APP;
+  }
+
   attributes() {
-    return Object.getOwnPropertyNames(this).filter(attr => attr[0] !== '_');
+    return Object.getOwnPropertyNames(this).filter(attr => attr[0] !== '_' && attr[0] !== '$');
   }
 
   afterValidate() {
@@ -29,7 +33,7 @@ export class Model {
   }
 
   clearErrors() {
-
+    this._errors = {};
   }
 
   isBoolean(attr) {
@@ -74,7 +78,16 @@ export class Model {
   }
 
   getValidators() {
+    return this.rules();
+  }
 
+  getValues() {
+    let map = {};
+    this.attributes().forEach(attr => {
+      map[attr] = this[attr];
+    });
+
+    return map;
   }
 
   getErrors() {
@@ -86,7 +99,7 @@ export class Model {
   }
 
   hasAttr(attr) {
-    return this[attr] !== undefined && typeof this[attr] !== 'function'
+    return this[attr] !== undefined && typeof this[attr] !== 'function';
   }
 
   setAttribute(attr, value) {

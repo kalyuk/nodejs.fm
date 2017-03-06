@@ -6,6 +6,19 @@ export default function () {
     default: {
       basePath: path.join(__dirname, '..'),
       components: {
+        Database: {
+          instance: {
+            identityDb: {
+              database: 'shopmaek-user',
+              username: 'shopmaek',
+              password: 'shopmaek',
+              params: {
+                host: 'localhost',
+                dialect: 'postgres'
+              }
+            }
+          }
+        },
         Router: {
           routes: {
             'GET /': {
@@ -18,7 +31,8 @@ export default function () {
               controller: 'home',
               action: 'login'
             },
-            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {
+            'GET /<module:\\w+>/<params:\\w+>/<action:\\w+>': {
+              controller: 'home'
             }
           }
         },
