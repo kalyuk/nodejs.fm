@@ -1,9 +1,9 @@
 import {ActiveModel} from '../../../../core/ActiveModel';
 
-export class UserModel extends ActiveModel {
+export default class UserModel extends ActiveModel {
 
   static $dbName = 'identityDb';
-  static tableName = 'user';
+  static $tableName = 'user';
 
   static $schema = {
     email: {

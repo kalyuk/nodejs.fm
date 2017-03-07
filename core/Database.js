@@ -7,14 +7,17 @@ export class Database extends Component {
 
   constructor() {
     super(...arguments);
-    Object.keys(this.instance).forEach(instanceName => {
-      let config = this.instance[instanceName];
-      this.__instances[instanceName] = new Sequelize(
-        config.database,
-        config.username,
-        config.password,
-        config.params);
+    Object.keys(this.instance || {}).forEach(instanceName => {
+      this.initInstance(instanceName, this.instance[instanceName]);
     });
+  }
+
+  initInstance(instanceName, config) {
+    this.__instances[instanceName] = new Sequelize(
+      config.database,
+      config.username,
+      config.password,
+      config.params);
   }
 
   getInstance(instanceName) {

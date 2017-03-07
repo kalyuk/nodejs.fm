@@ -59,7 +59,7 @@ export class Router extends Component {
           $route[attr] = $match[index + 1];
         });
 
-         return true;
+        return true;
       }
       return false;
     });

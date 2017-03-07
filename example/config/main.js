@@ -1,24 +1,13 @@
 import path from 'path';
 import {HomeModule} from '../modules/home/HomeModule';
+import {IdentityModule} from '../modules/identity/IdentityModule';
 
 export default function () {
   return {
     default: {
       basePath: path.join(__dirname, '..'),
       components: {
-        Database: {
-          instance: {
-            identityDb: {
-              database: 'shopmaek-user',
-              username: 'shopmaek',
-              password: 'shopmaek',
-              params: {
-                host: 'localhost',
-                dialect: 'postgres'
-              }
-            }
-          }
-        },
+        Database: {},
         Router: {
           routes: {
             'GET /': {
@@ -27,13 +16,11 @@ export default function () {
               action: 'index'
             },
             'GET /login': {
-              module: 'home',
+              module: 'identity',
               controller: 'home',
               action: 'login'
             },
-            'GET /<module:\\w+>/<params:\\w+>/<action:\\w+>': {
-              controller: 'home'
-            }
+            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {}
           }
         },
         WebServer: {
@@ -45,8 +32,21 @@ export default function () {
       modules: {
         home: {
           Instance: HomeModule
+        },
+        identity: {
+          Instance: IdentityModule,
+          database: {
+            instanceName: 'identityDb',
+            database: 'nodejs.fm-user',
+            username: 'nodejs.fm',
+            password: 'nodejs.fm',
+            params: {
+              host: 'localhost',
+              dialect: 'postgres'
+            }
+          }
         }
       }
     }
-  }
+  };
 }

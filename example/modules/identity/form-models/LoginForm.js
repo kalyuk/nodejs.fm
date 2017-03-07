@@ -1,6 +1,6 @@
 import {Model} from '../../../../core/Model';
 
-export class LoginForm extends Model {
+export default class LoginForm extends Model {
 
   email = null;
   password = null;

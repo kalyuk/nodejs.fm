@@ -9,6 +9,7 @@ export class Application {
   __webServer = null;
   __components = {};
   __modules = {};
+  __boot = null;
 
   components = {
     WebServer,
@@ -28,11 +29,25 @@ export class Application {
   };
 
   constructor(configPath) {
+    console.log('Running application'); // eslint-disable-line no-console
     this.parseArgs();
     this.loadConfig(configPath);
     global.APP = this;
     this.router = this.getComponent('Router');
     this.isDevelopment = this.args.env === 'development';
+    this.__boot = this.boot();
+  }
+
+  async boot() {
+    console.log('Running application boot'); // eslint-disable-line no-console
+
+    let promises = [];
+
+    Object.keys(this.config.modules).forEach(moduleName => {
+      promises.push(this.getModule(moduleName).boot());
+    });
+
+    return Promise.all(promises);
   }
 
   parseArgs() {
@@ -63,6 +78,7 @@ export class Application {
   }
 
   async runServer() {
+    await this.__boot;
     this.initWebServer();
     return await this.__webServer.listen();
   }
@@ -74,6 +90,10 @@ export class Application {
     if (!this.__components[name]) {
       if (typeof this.components[name] === 'function') {
         this.__components[name] = new this.components[name](this.config.components[name]);
+      } else if (this.components[name] && typeof this.components[name].Instance === 'function') {
+        this.__components[name] = new this.components[name].Instance(this.components[name]);
+      } else {
+        throw new Error(`Component "${name}" did not resolve`);
       }
     }
 
@@ -88,6 +108,8 @@ export class Application {
     if (!this.__modules[name]) {
       if (this.config.modules[name] && typeof this.config.modules[name].Instance === 'function') {
         this.__modules[name] = new this.config.modules[name].Instance(this.config.modules[name]);
+      } else {
+        throw new Error(`Module "${name}" did not resolve`);
       }
     }
 

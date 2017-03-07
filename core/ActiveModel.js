@@ -30,6 +30,54 @@ export class ActiveModel extends Model {
 
   static $schema = {};
 
+  static getDbInstance() {
+    return global.App.getComponent('Database').getInstance(this.$dbName);
+  }
+
+  static getDbModel() {
+    return this.getDbInstance()[this.tableName];
+  }
+
+  static async findById(id) {
+    return await this.getDbModel().findById(id);
+  }
+
+  static async findOne(options) {
+    return await this.getDbModel().findOne(options);
+  }
+
+  static async findOrCreate(options) {
+    return await this.getDbModel().findOrCreate(options);
+  }
+
+  static async findAndCountAll(options) {
+    return await this.getDbModel().findAndCountAll(options);
+  }
+
+  static async findAll(options) {
+    return await this.getDbModel().findAll(options);
+  }
+
+  static async count(options) {
+    return await this.getDbModel().count(options);
+  }
+
+  static async max(field, options) {
+    return await this.getDbModel().max(field, options);
+  }
+
+  static async min(field, options) {
+    return await this.getDbModel().min(field, options);
+  }
+
+  static async sum(field, options) {
+    return await this.getDbModel().sum(field, options);
+  }
+
+  async remove() {
+    return await this.instance.destroy();
+  }
+
   instance = null;
 
   constructor() {
@@ -42,14 +90,6 @@ export class ActiveModel extends Model {
     return this.instance === null;
   }
 
-  static getDbInstance() {
-    return global.App.getComponent('Database').getInstance(this.$dbName);
-  }
-
-  static getDbModel() {
-    return this.getDbInstance()[this.tableName];
-  }
-
   async save() {
     let isValid = await this.validate();
     if (isValid) {
@@ -60,9 +100,5 @@ export class ActiveModel extends Model {
       return await this.instance.update(values).save();
     }
     return false;
-  }
-
-  static async findById(id) {
-    return await this.getDbModel().findById(id);
   }
 }
