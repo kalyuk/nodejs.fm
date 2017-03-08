@@ -26,16 +26,20 @@ export class ActiveModel extends Model {
   static $dbInstance = null;
   static $dbName = 'db';
   static $dbModel = null;
-  static tableName = '';
+  static $tableName = '';
+  static $paranoid = false;
+  static $timestamps = false;
+  static $freezeTableName = false;
 
   static $schema = {};
+  static $relations = [];
 
   static getDbInstance() {
-    return global.App.getComponent('Database').getInstance(this.$dbName);
+    return global.APP.getComponent('Database').getInstance(this.$dbName);
   }
 
   static getDbModel() {
-    return this.getDbInstance()[this.tableName];
+    return this.getDbInstance().models[this.$tableName];
   }
 
   static async findById(id) {

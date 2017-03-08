@@ -44,20 +44,7 @@ export class Module extends Component {
   }
 
   async initModels() {
-    return new Promise(resolve => {
-      fs.readdir(path.join(this.basePath, 'models'), (err, files) => {
-        if (!err) {
-          files.forEach(file => {
-            let modelName = file.match(/(\w+)Model\.js$/);
-            if (modelName) {
-              let ModelInstance = require(path.join(this.basePath, 'models', file)).default;
-              this.$db.define(ModelInstance.$tableName, ModelInstance.$schema);
-            }
-          });
-        }
-        resolve();
-      });
-    });
+    return this.app.getComponent('Database').initModels(path.join(this.basePath, 'models'));
   }
 
 }

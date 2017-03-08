@@ -15,7 +15,7 @@ export class Response extends Component {
     let data = result.content;
 
     if (typeof data === 'object') {
-      data = JSON.stringify({data})
+      data = JSON.stringify({data});
     }
 
     response.statusCode = result.state;

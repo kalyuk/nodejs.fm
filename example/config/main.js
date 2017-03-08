@@ -20,7 +20,9 @@ export default function () {
               controller: 'home',
               action: 'login'
             },
-            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {}
+            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {
+
+            }
           }
         },
         WebServer: {

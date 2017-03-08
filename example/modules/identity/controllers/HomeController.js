@@ -26,18 +26,17 @@ export async function loginAction() {
 
 export async function createAction() {
 
-  /*let $userModel = new UserModel();
-  $userModel.load({
-    email: 'admin@admin.ru',
-    password: '1111111'
-  });
+  /* let $userModel = new UserModel();
+   $userModel.load({
+   email: 'admin@admin.ru',
+   password: '1111111'
+   });
 
-  await $userModel.save();*/
-
-  return await UserModel.findById(123);
+   await $userModel.save();
+   */
 
   return {
-    content: $userModel.getErrors()
-  }
+    content: await UserModel.findById(123)
+  };
 
 }

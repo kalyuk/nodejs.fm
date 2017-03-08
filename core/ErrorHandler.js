@@ -7,16 +7,17 @@ export class ErrorHandler extends Component {
     this.response = this.app.getComponent('Response');
   }
 
-  handle(response, code, message) {
-    let content = this.app.isDevelopment && code >= 500 ? message : 'Disaster struck';
+  handle(code, message) {
+    let content = this.app.isDevelopment && code >= 500
+    || (code < 500) ? message : 'Disaster struck';
 
-    this.response.render(response, {
+    return {
       state: code,
       content: {
         code,
         error: content
       }
-    });
+    };
   }
 
 }

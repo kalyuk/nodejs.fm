@@ -4,6 +4,7 @@ import {Router} from './Router';
 import {Response} from './Response';
 import {ErrorHandler} from './ErrorHandler';
 import {Database} from './Database';
+import {ConsoleRender} from './ConsoleRender';
 
 export class Application {
   __webServer = null;
@@ -16,7 +17,8 @@ export class Application {
     Router,
     Response,
     ErrorHandler,
-    Database
+    Database,
+    ConsoleRender
   };
 
   config = {
@@ -25,7 +27,8 @@ export class Application {
   };
 
   args = {
-    env: 'development'
+    env: 'development',
+    route: ''
   };
 
   constructor(configPath) {
@@ -34,6 +37,7 @@ export class Application {
     this.loadConfig(configPath);
     global.APP = this;
     this.router = this.getComponent('Router');
+    this.errorHandler = this.getComponent('ErrorHandler');
     this.isDevelopment = this.args.env === 'development';
     this.__boot = this.boot();
   }
@@ -70,10 +74,27 @@ export class Application {
     }
   }
 
+  async handleRequest(req, res, isCommand = false) {
+    let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
+    let response = !isCommand ?
+      this.getComponent('Response') : this.getComponent('ConsoleRender');
+    if (route) {
+      try {
+        let result = await this.getModule(route.module).runAction(route);
+        return response.render(res, result);
+      } catch (e) {
+        let error = this.errorHandler.handle(500, e.message);
+        return response.render(res, error);
+      }
+    }
+    let error = this.errorHandler.handle(404, `Page "${req.url}" not found`);
+    return response.render(res, error);
+  }
+
   initWebServer() {
     if (!this.__webServer) {
       this.__webServer = this.getComponent('WebServer');
-      this.__webServer.onRequest(this.router.handleRequest.bind(this.router));
+      this.__webServer.onRequest(this.handleRequest.bind(this));
     }
   }
 
@@ -81,6 +102,15 @@ export class Application {
     await this.__boot;
     this.initWebServer();
     return await this.__webServer.listen();
+  }
+
+  async runCommand() {
+    await this.__boot;
+    await this.handleRequest({url: this.args.route, method: 'command'}, {}, true);
+  }
+
+  getModules() {
+    return this.__modules;
   }
 
   getComponent(name) {
@@ -96,7 +126,6 @@ export class Application {
         throw new Error(`Component "${name}" did not resolve`);
       }
     }
-
     return this.__components[name];
   }
 
