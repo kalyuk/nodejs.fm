@@ -12,5 +12,5 @@ export async function up() {
 export async function down() {
   console.log('down');
 
-  return true;
+  return false;
 }

@@ -4,11 +4,11 @@ import path from 'path';
 import MigrationModel from '../models/MigrationModel';
 
 const MIGRATION_TEMPLATE = `export async function up(){
-  
+  return false;
 }
 
 export async function down(){
-
+  return false;
 }`;
 
 
@@ -41,12 +41,12 @@ export async function upAction(params, {app}) {
       if (migrations.indexOf(`${file}-${modules[i]}`) === -1) {
         let migration = require(path.join(migrationsPath, file));
 
-        await migration.up();
+        if (await migration.up()) {
+          let $migration = new MigrationModel();
+          $migration.load({moduleName: modules[i], name: file});
 
-        let $migration = new MigrationModel();
-        $migration.load({moduleName: modules[i], name: file});
-
-        await $migration.save();
+          await $migration.save();
+        }
       }
     }
   }
@@ -57,7 +57,6 @@ export async function upAction(params, {app}) {
 }
 
 export async function downAction(params, {app}) {
-
   if (!app.args.module) {
     throw new Error('The name of the module is not specified');
   }
@@ -85,9 +84,10 @@ export async function downAction(params, {app}) {
     if (migrationIndex !== -1) {
       let migration = require(path.join(migrationsPath, file));
 
-      await migration.down();
+      if (await migration.down()) {
+        await migrations[migrationIndex].remove();
+      }
 
-      await migrations[migrationIndex].remove();
     }
   }
 
@@ -98,7 +98,6 @@ export async function downAction(params, {app}) {
 }
 
 export async function createAction(params, {app}) {
-
   if (!app.args.module) {
     throw new Error('The name of the module is not specified');
   }
