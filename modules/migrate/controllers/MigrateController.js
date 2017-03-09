@@ -1,8 +1,26 @@
 import fs from 'fs';
 import path from 'path';
 
-export async function upAction(params, {app}) {
+function getModule(app) {
+  if (!app.args.module) {
+    throw new Error('The name of the module is not specified');
+  }
+  return app.getModule(app.args.module);
+}
 
+
+export async function upAction(params, {app}) {
+  let module = getModule(app);
+
+  let migrationsPath = path.join(module.basePath, 'migrations');
+
+  await module.$db.sync();
+
+  let files = fs.readdirSync(migrationsPath);
+
+  files.forEach(file => {
+    console.log(file)
+  });
 
 
   return {
@@ -11,14 +29,10 @@ export async function upAction(params, {app}) {
 }
 
 export async function createAction(params, {app}) {
-  if (!app.args.module) {
-    return {
-      content: 'Module empty'
-    };
-  }
+  let module = getModule(app);
+
   let name = app.args.name ? '_' + app.args.name : '';
 
-  let module = app.getModule(app.args.module);
   let time = (new Date()).getTime();
   let migrationPath = path.join(module.basePath, 'migrations', time + name + '.js');
 

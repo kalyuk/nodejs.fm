@@ -40,7 +40,9 @@ export class Module extends Component {
   }
 
   async boot() {
-    await this.initModels();
+    if (this.$db) {
+      await this.initModels();
+    }
   }
 
   async initModels() {

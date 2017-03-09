@@ -15,11 +15,13 @@ export class Database extends Component {
   }
 
   initInstance(instanceName, config) {
-    this.__instances[instanceName] = new Sequelize(
-      config.database,
-      config.username,
-      config.password,
-      config.params);
+    if (!this.__instances[instanceName]) {
+      this.__instances[instanceName] = new Sequelize(
+        config.database,
+        config.username,
+        config.password,
+        config.params);
+    }
   }
 
   getInstance(instanceName) {

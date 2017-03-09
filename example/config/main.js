@@ -7,7 +7,19 @@ export default function () {
     default: {
       basePath: path.join(__dirname, '..'),
       components: {
-        Database: {},
+        Database: {
+          instance: {
+            app: {
+              database: 'nodejs.fm-application',
+              username: 'nodejs.fm',
+              password: 'nodejs.fm',
+              params: {
+                host: 'localhost',
+                dialect: 'postgres'
+              }
+            }
+          }
+        },
         Router: {
           routes: {
             'GET /': {
@@ -20,9 +32,7 @@ export default function () {
               controller: 'home',
               action: 'login'
             },
-            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {
-
-            }
+            'GET /<module:\\w+>/<controller:\\w+>/<action:\\w+>': {}
           }
         },
         WebServer: {

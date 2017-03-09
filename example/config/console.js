@@ -14,7 +14,10 @@ export default function () {
   };
 
   config.default.modules.migrate = {
-    Instance: MigrateModule
+    Instance: MigrateModule,
+    database: {
+      instanceName: 'app'
+    }
   };
 
   return config;
