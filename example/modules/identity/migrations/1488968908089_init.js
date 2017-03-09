@@ -10,7 +10,11 @@ export async function up() {
 }
 
 export async function down() {
-  console.log('down');
+  let $admin = await UserModel.find({where: {
+    email: 'admin@admin.local'
+  }});
 
-  return false;
+  await $admin.remove();
+
+  return true;
 }

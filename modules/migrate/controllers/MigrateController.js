@@ -66,31 +66,18 @@ export async function downAction(params, {app}) {
 
   await module.$db.sync();
 
-  let migrations = await MigrationModel.findAll({
+  let $migration = await MigrationModel.find({
     where: {
       moduleName: app.args.module
-    }
+    },
+    order: 'id DESC'
   });
 
-  let $migrations = migrations.map(migrate => `${migrate.name}-${migrate.moduleName}`);
+  let migration = require(path.join(migrationsPath, $migration.name));
 
-  let files = fs.readdirSync(migrationsPath);
-
-  for (let q = 0; q < files.length; q++) {
-    let file = files[q];
-
-    let migrationIndex = $migrations.indexOf(`${file}-${app.args.module}`);
-
-    if (migrationIndex !== -1) {
-      let migration = require(path.join(migrationsPath, file));
-
-      if (await migration.down()) {
-        await migrations[migrationIndex].remove();
-      }
-
-    }
+  if (await migration.down()) {
+    await $migration.remove();
   }
-
 
   return {
     content: 'Migrations down'

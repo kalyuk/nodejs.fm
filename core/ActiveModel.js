@@ -40,12 +40,20 @@ export class ActiveModel extends Model {
 
   static async runOrmMethod(method, options) {
     return this.getDbModel()[method](options).then(data => {
-      return data.map(item => {
-        let instance = new this();
-        instance.load(item);
-        instance.$instance = item;
-        return instance;
-      });
+      if (data instanceof Array) {
+        return data.map(item => {
+          let instance = new this();
+          instance.load(item);
+          instance.$instance = item;
+          return instance;
+        });
+      }
+
+      let instance = new this();
+      instance.load(data);
+      instance.$instance = data;
+      return instance;
+
     });
   }
 
@@ -59,6 +67,10 @@ export class ActiveModel extends Model {
 
   static async findOne(options) {
     return this.runOrmMethod('findOne', options);
+  }
+
+  static async find(options) {
+    return this.findOne(options);
   }
 
   static async findOrCreate(options) {
