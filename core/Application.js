@@ -5,6 +5,7 @@ import {Response} from './Response';
 import {ErrorHandler} from './ErrorHandler';
 import {Database} from './Database';
 import {ConsoleRender} from './ConsoleRender';
+import {Request} from './Request';
 
 export class Application {
   __webServer = null;
@@ -18,7 +19,8 @@ export class Application {
     Response,
     ErrorHandler,
     Database,
-    ConsoleRender
+    ConsoleRender,
+    Request
   };
 
   config = {
@@ -37,6 +39,7 @@ export class Application {
     this.loadConfig(configPath);
     global.APP = this;
     this.router = this.getComponent('Router');
+    this.request = this.getComponent('Request');
     this.errorHandler = this.getComponent('ErrorHandler');
     this.isDevelopment = this.args.env === 'development';
     this.__boot = this.boot();
@@ -76,8 +79,13 @@ export class Application {
 
   async handleRequest(req, res, isCommand = false) {
     let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
+
+    if (req.body) {
+      route.body = req.body;
+    }
+
     let response = !isCommand ?
-      this.getComponent('Response') : this.getComponent('ConsoleRender');
+    this.getComponent('Response') : this.getComponent('ConsoleRender');
     if (route) {
       try {
         let result = await this.getModule(route.module).runAction(route);
@@ -94,7 +102,25 @@ export class Application {
   initWebServer() {
     if (!this.__webServer) {
       this.__webServer = this.getComponent('WebServer');
-      this.__webServer.onRequest(this.handleRequest.bind(this));
+      this.__webServer.onRequest((request, res) => {
+        if (request.method === 'POST' || request.method === 'PUT') {
+          request.rawBody = '';
+
+          request.on('data', function (data) {
+            request.rawBody += data;
+            if (request.rawBody.length > 1e6) {
+              request.connection.destroy();
+            }
+          });
+
+          request.on('end', () => {
+            this.request.parse(request);
+            this.handleRequest(request, res);
+          });
+        } else {
+          this.handleRequest(request, res);
+        }
+      });
     }
   }
 

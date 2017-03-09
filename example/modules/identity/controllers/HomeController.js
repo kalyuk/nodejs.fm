@@ -10,7 +10,8 @@ import UserModel from '../models/UserModel';
   }
 };*/
 
-export async function loginAction() {
+export async function loginAction({body}) {
+  console.log(body);
   const $loginForm = new LoginForm();
 
   $loginForm.load({

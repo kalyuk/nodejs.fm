@@ -27,7 +27,7 @@ export default function () {
               controller: 'home',
               action: 'index'
             },
-            'GET /login': {
+            'POST /login': {
               module: 'identity',
               controller: 'home',
               action: 'login'
