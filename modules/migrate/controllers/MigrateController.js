@@ -56,6 +56,47 @@ export async function upAction(params, {app}) {
   };
 }
 
+export async function downAction(params, {app}) {
+
+  if (!app.args.module) {
+    throw new Error('The name of the module is not specified');
+  }
+
+  let module = app.getModule(app.args.module);
+  let migrationsPath = path.join(module.basePath, 'migrations');
+
+  await module.$db.sync();
+
+  let migrations = await MigrationModel.findAll({
+    where: {
+      moduleName: app.args.module
+    }
+  });
+
+  let $migrations = migrations.map(migrate => `${migrate.name}-${migrate.moduleName}`);
+
+  let files = fs.readdirSync(migrationsPath);
+
+  for (let q = 0; q < files.length; q++) {
+    let file = files[q];
+
+    let migrationIndex = $migrations.indexOf(`${file}-${app.args.module}`);
+
+    if (migrationIndex !== -1) {
+      let migration = require(path.join(migrationsPath, file));
+
+      await migration.down();
+
+      await migrations[migrationIndex].remove();
+    }
+  }
+
+
+  return {
+    content: 'Migrations down'
+  };
+}
+
 export async function createAction(params, {app}) {
 
   if (!app.args.module) {

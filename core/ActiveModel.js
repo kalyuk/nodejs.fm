@@ -38,28 +38,8 @@ export class ActiveModel extends Model {
     return global.APP.getComponent('Database').getInstance(this.$dbName);
   }
 
-  static getDbModel() {
-    return this.getDbInstance().models[this.$tableName];
-  }
-
-  static async findById(id) {
-    return await this.getDbModel().findById(id);
-  }
-
-  static async findOne(options) {
-    return await this.getDbModel().findOne(options);
-  }
-
-  static async findOrCreate(options) {
-    return await this.getDbModel().findOrCreate(options);
-  }
-
-  static async findAndCountAll(options) {
-    return await this.getDbModel().findAndCountAll(options);
-  }
-
-  static async findAll(options) {
-    return await this.getDbModel().findAll(options).then(data => {
+  static async runOrmMethod(method, options) {
+    return this.getDbModel()[method](options).then(data => {
       return data.map(item => {
         let instance = new this();
         instance.load(item);
@@ -69,24 +49,48 @@ export class ActiveModel extends Model {
     });
   }
 
+  static getDbModel() {
+    return this.getDbInstance().models[this.$tableName];
+  }
+
+  static async findById(id) {
+    return this.runOrmMethod('findById', id);
+  }
+
+  static async findOne(options) {
+    return this.runOrmMethod('findOne', options);
+  }
+
+  static async findOrCreate(options) {
+    return this.runOrmMethod('findOrCreate', options);
+  }
+
+  static async findAndCountAll(options) {
+    return this.runOrmMethod('findAndCountAll', options);
+  }
+
+  static async findAll(options) {
+    return this.runOrmMethod('findAll', options);
+  }
+
   static async count(options) {
-    return await this.getDbModel().count(options);
+    return this.getDbModel().count(options);
   }
 
   static async max(field, options) {
-    return await this.getDbModel().max(field, options);
+    return this.getDbModel().max(field, options);
   }
 
   static async min(field, options) {
-    return await this.getDbModel().min(field, options);
+    return this.getDbModel().min(field, options);
   }
 
   static async sum(field, options) {
-    return await this.getDbModel().sum(field, options);
+    return this.getDbModel().sum(field, options);
   }
 
   async remove() {
-    return await this.instance.destroy();
+    return this.$instance.destroy();
   }
 
   $instance = null;

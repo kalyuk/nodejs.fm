@@ -1,7 +1,6 @@
 import UserModel from '../models/UserModel';
 
 export async function up() {
-
   let $admin = new UserModel();
   $admin.email = 'admin@admin.local';
   $admin.password = '111111';
@@ -11,5 +10,7 @@ export async function up() {
 }
 
 export async function down() {
+  console.log('down');
 
+  return true;
 }
