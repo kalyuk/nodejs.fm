@@ -1,6 +1,15 @@
 import LoginForm from '../form-models/LoginForm';
 import UserModel from '../models/UserModel';
 
+/*export const BEHAVIORS = {
+  access: {
+    rules: [{
+      permissions: ['guest'],
+      actions: ['login']
+    }]
+  }
+};*/
+
 export async function loginAction() {
   const $loginForm = new LoginForm();
 

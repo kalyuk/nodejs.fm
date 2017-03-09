@@ -1,51 +1,75 @@
 import fs from 'fs';
 import path from 'path';
 
-function getModule(app) {
-  if (!app.args.module) {
-    throw new Error('The name of the module is not specified');
-  }
-  return app.getModule(app.args.module);
+import MigrationModel from '../models/MigrationModel';
+
+const MIGRATION_TEMPLATE = `export async function up(){
+  
 }
+
+export async function down(){
+
+}`;
 
 
 export async function upAction(params, {app}) {
-  let module = getModule(app);
+  let modules = app.args.modules ? app.args.modules.split(',') : Object.keys(app.getModules());
 
-  let migrationsPath = path.join(module.basePath, 'migrations');
+  for (let i = 0; i < modules.length; i++) {
+    let module = app.getModule(modules[i]);
+    if (!module.$db) {
+      continue;
+    }
 
-  await module.$db.sync();
+    let migrationsPath = path.join(module.basePath, 'migrations');
 
-  let files = fs.readdirSync(migrationsPath);
+    await module.$db.sync();
 
-  files.forEach(file => {
-    console.log(file)
-  });
+    let migrations = await MigrationModel.findAll({
+      where: {
+        moduleName: modules[i]
+      }
+    });
 
+    migrations = migrations.map(migrate => `${migrate.name}-${migrate.moduleName}`);
+
+    let files = fs.readdirSync(migrationsPath);
+
+    for (let q = 0; q < files.length; q++) {
+      let file = files[q];
+
+      if (migrations.indexOf(`${file}-${modules[i]}`) === -1) {
+        let migration = require(path.join(migrationsPath, file));
+
+        await migration.up();
+
+        let $migration = new MigrationModel();
+        $migration.load({moduleName: modules[i], name: file});
+
+        await $migration.save();
+      }
+    }
+  }
 
   return {
-    content: 'test'
+    content: 'Migrations up'
   };
 }
 
 export async function createAction(params, {app}) {
-  let module = getModule(app);
+
+  if (!app.args.module) {
+    throw new Error('The name of the module is not specified');
+  }
+
+  let module = app.getModule(app.args.module);
 
   let name = app.args.name ? '_' + app.args.name : '';
 
   let time = (new Date()).getTime();
   let migrationPath = path.join(module.basePath, 'migrations', time + name + '.js');
 
-  let template = `export async function up(){
-  
-  
-  }
-
-export async function down(){
-
-}`;
-
-  fs.writeFileSync(migrationPath, template);
+  fs.writeFileSync(migrationPath, MIGRATION_TEMPLATE);
 
   return {
     content: app.args.module

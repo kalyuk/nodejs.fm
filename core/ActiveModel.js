@@ -59,7 +59,14 @@ export class ActiveModel extends Model {
   }
 
   static async findAll(options) {
-    return await this.getDbModel().findAll(options);
+    return await this.getDbModel().findAll(options).then(data => {
+      return data.map(item => {
+        let instance = new this();
+        instance.load(item);
+        instance.$instance = item;
+        return instance;
+      });
+    });
   }
 
   static async count(options) {
@@ -82,16 +89,16 @@ export class ActiveModel extends Model {
     return await this.instance.destroy();
   }
 
-  instance = null;
+  $instance = null;
 
   constructor() {
     super(...arguments);
-    this.$dbInstance = this.getDbInstance();
-    this.$dbModel = this.getDbModel();
+    this.$dbInstance = this.constructor.getDbInstance();
+    this.$dbModel = this.constructor.getDbModel();
   }
 
   isNewInstance() {
-    return this.instance === null;
+    return this.$instance === null;
   }
 
   async save() {
@@ -101,7 +108,7 @@ export class ActiveModel extends Model {
       if (this.isNewInstance()) {
         return await this.$dbModel.create(values);
       }
-      return await this.instance.update(values).save();
+      return await this.$instance.update(values).save();
     }
     return false;
   }

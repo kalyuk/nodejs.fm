@@ -46,7 +46,8 @@ export class Module extends Component {
   }
 
   async initModels() {
-    return this.app.getComponent('Database').initModels(path.join(this.basePath, 'models'));
+    return this.app.getComponent('Database')
+      .initModels(path.join(this.basePath, 'models'), this.database.instanceName);
   }
 
 }

@@ -17,10 +17,10 @@ export class Database extends Component {
   initInstance(instanceName, config) {
     if (!this.__instances[instanceName]) {
       this.__instances[instanceName] = new Sequelize(
-        config.database,
-        config.username,
-        config.password,
-        config.params);
+      config.database,
+      config.username,
+      config.password,
+      config.params);
     }
   }
 
@@ -31,7 +31,7 @@ export class Database extends Component {
     return this.__instances[instanceName];
   }
 
-  async initModels(modelsPath) {
+  async initModels(modelsPath, instanceName) {
     return new Promise(resolve => {
       fs.readdir(modelsPath, (err, files) => {
         if (!err) {
@@ -39,6 +39,11 @@ export class Database extends Component {
             let modelName = file.match(/(\w+)Model\.js$/);
             if (modelName) {
               let ModelInstance = require(path.join(modelsPath, file)).default;
+
+              if (instanceName) {
+                ModelInstance.$dbName = instanceName;
+              }
+
               ModelInstance.getDbInstance().define(ModelInstance.$tableName, ModelInstance.$schema, {
                 tableName: ModelInstance.$tableName,
                 paranoid: ModelInstance.$paranoid,

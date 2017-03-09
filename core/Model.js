@@ -6,7 +6,7 @@ export class Model {
   _errors = {};
 
   constructor() {
-    this.app = global.APP;
+    this.$app = global.APP;
   }
 
   attributes() {
@@ -53,8 +53,8 @@ export class Model {
       each(this.rules(), (rule, callback) => {
         each(rule[0], async(attr, $callback) => {
           if (
-            (this[rule[1]] && !await this[rule[1]](attr))
-            || (!this[rule[1]] && Validator[rule[1]] && !Validator[rule[1]](this[attr] + '', rule[2] || {}))
+          (this[rule[1]] && !await this[rule[1]](attr))
+          || (!this[rule[1]] && Validator[rule[1]] && !Validator[rule[1]](this[attr] + '', rule[2] || {}))
           ) {
             this.addError(attr, rule[1], rule[2].message);
           }
@@ -64,7 +64,7 @@ export class Model {
         if (err) {
           throw new Error(err);
         }
-        resolve();
+        resolve(true);
       });
     });
   }

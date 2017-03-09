@@ -1,8 +1,7 @@
 import {ActiveModel} from '../../../core/ActiveModel';
 
-export default class Migration extends ActiveModel {
+export default class MigrationModel extends ActiveModel {
 
-  static $dbName = 'app';
   static $tableName = 'migration';
 
   static $schema = {
