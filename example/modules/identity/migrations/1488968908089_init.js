@@ -1,20 +1,22 @@
 import UserModel from '../models/UserModel';
 
 export async function up() {
-  let $admin = new UserModel();
-  $admin.email = 'admin@admin.local';
-  $admin.password = '111111';
-  await $admin.save();
+	let $admin = new UserModel();
+	$admin.email = 'admin@admin.local';
+	$admin.password = '111111';
+	await $admin.save();
 
-  return true;
+	return true;
 }
 
 export async function down() {
-  let $admin = await UserModel.find({where: {
-    email: 'admin@admin.local'
-  }});
+	let $admin = await UserModel.find({
+		where: {
+			email: 'admin@admin.local'
+		}
+	});
 
-  await $admin.remove();
+	await $admin.remove();
 
-  return true;
+	return true;
 }

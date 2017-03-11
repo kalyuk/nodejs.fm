@@ -6,27 +6,27 @@ export const EVENT_CLOSE = 'close';
 
 export class WebServer extends Component {
 
-  __server = null;
+	__server = null;
 
-  constructor() {
-    super(...arguments);
-    this.__server = http.createServer();
-    this.__server.timeout = this.timeout;
-  }
+	constructor() {
+		super(...arguments);
+		this.__server = http.createServer();
+		this.__server.timeout = this.timeout;
+	}
 
-  onRequest(callback) {
-    this.__server.on(EVENT_REQUEST, callback);
-  }
+	onRequest(callback) {
+		this.__server.on(EVENT_REQUEST, callback);
+	}
 
-  onClose(callback) {
-    this.__server.on(EVENT_CLOSE, callback);
-  }
+	onClose(callback) {
+		this.__server.on(EVENT_CLOSE, callback);
+	}
 
-  async listen() {
-    return new Promise(resolve => {
-      this.__server.listen(this.port, this.host, () => {
-        resolve(this);
-      });
-    });
-  }
+	async listen() {
+		return new Promise(resolve => {
+			this.__server.listen(this.port, this.host, () => {
+				resolve(this);
+			});
+		});
+	}
 }

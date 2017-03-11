@@ -3,109 +3,109 @@ import each from 'async/each';
 
 export class Model {
 
-  _errors = {};
+	_errors = {};
 
-  constructor() {
-    this.$app = global.APP;
-  }
+	constructor() {
+		this.$app = global.APP;
+	}
 
-  attributes() {
-    return Object.getOwnPropertyNames(this).filter(attr => attr[0] !== '_' && attr[0] !== '$');
-  }
+	attributes() {
+		return Object.getOwnPropertyNames(this).filter(attr => attr[0] !== '_' && attr[0] !== '$');
+	}
 
-  afterValidate() {
+	afterValidate() {
 
-  }
+	}
 
-  attributeLabels() {
+	attributeLabels() {
 
-  }
+	}
 
-  addError(attr, rule, message) {
-    if (!this._errors[attr]) {
-      this._errors[attr] = {};
-    }
-    this._errors[attr][rule] = message;
-  }
+	addError(attr, rule, message) {
+		if (!this._errors[attr]) {
+			this._errors[attr] = {};
+		}
+		this._errors[attr][rule] = message;
+	}
 
-  beforeValidate() {
+	beforeValidate() {
 
-  }
+	}
 
-  clearErrors() {
-    this._errors = {};
-  }
+	clearErrors() {
+		this._errors = {};
+	}
 
-  isBoolean(attr) {
-    return typeof this[attr] === 'boolean';
-  }
+	isBoolean(attr) {
+		return typeof this[attr] === 'boolean';
+	}
 
-  required(attr) {
-    return this[attr] !== undefined && this[attr] !== null;
-  }
+	required(attr) {
+		return this[attr] !== undefined && this[attr] !== null;
+	}
 
-  rules() {
-    return [];
-  }
+	rules() {
+		return [];
+	}
 
-  async validate() {
-    return new Promise(resolve => {
-      each(this.rules(), (rule, callback) => {
-        each(rule[0], async(attr, $callback) => {
-          if (
-          (this[rule[1]] && !await this[rule[1]](attr))
-          || (!this[rule[1]] && Validator[rule[1]] && !Validator[rule[1]](this[attr] + '', rule[2] || {}))
-          ) {
-            this.addError(attr, rule[1], rule[2].message);
-          }
-          $callback();
-        }, callback);
-      }, (err) => {
-        if (err) {
-          throw new Error(err);
-        }
-        resolve(true);
-      });
-    });
-  }
+	async validate() {
+		return new Promise(resolve => {
+			each(this.rules(), (rule, callback) => {
+				each(rule[0], async(attr, $callback) => {
+					if (
+						(this[rule[1]] && !await this[rule[1]](attr))
+						|| (!this[rule[1]] && Validator[rule[1]] && !Validator[rule[1]](this[attr] + '', rule[2] || {}))
+					) {
+						this.addError(attr, rule[1], rule[2].message);
+					}
+					$callback();
+				}, callback);
+			}, (err) => {
+				if (err) {
+					throw new Error(err);
+				}
+				resolve(true);
+			});
+		});
+	}
 
-  load(values) {
-    this.attributes().forEach(attr => {
-      if (values[attr]) {
-        this.setAttribute(attr, values[attr]);
-      }
-    });
-  }
+	load(values) {
+		this.attributes().forEach(attr => {
+			if (values[attr]) {
+				this.setAttribute(attr, values[attr]);
+			}
+		});
+	}
 
-  getValidators() {
-    return this.rules();
-  }
+	getValidators() {
+		return this.rules();
+	}
 
-  getValues() {
-    let map = {};
-    this.attributes().forEach(attr => {
-      map[attr] = this[attr];
-    });
+	getValues() {
+		let map = {};
+		this.attributes().forEach(attr => {
+			map[attr] = this[attr];
+		});
 
-    return map;
-  }
+		return map;
+	}
 
-  getErrors() {
-    return this._errors;
-  }
+	getErrors() {
+		return this._errors;
+	}
 
-  hasErrors() {
-    return Object.keys(this._errors).length;
-  }
+	hasErrors() {
+		return Object.keys(this._errors).length;
+	}
 
-  hasAttr(attr) {
-    return this[attr] !== undefined && typeof this[attr] !== 'function';
-  }
+	hasAttr(attr) {
+		return this[attr] !== undefined && typeof this[attr] !== 'function';
+	}
 
-  setAttribute(attr, value) {
-    if (this.hasAttr(attr)) {
-      this[attr] = value;
-    }
-  }
+	setAttribute(attr, value) {
+		if (this.hasAttr(attr)) {
+			this[attr] = value;
+		}
+	}
 
 }

@@ -1,5 +1,5 @@
 export async function indexActions() {
-  return {
-    content: 'test'
-  };
+	return {
+		content: 'test'
+	};
 }

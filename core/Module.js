@@ -5,49 +5,49 @@ import path from 'path';
 
 export class Module extends Component {
 
-  $db;
-  __controllers = {};
+	$db;
+	__controllers = {};
 
-  constructor() {
-    super(...arguments);
-    if (this.database) {
-      let db = this.app.getComponent('Database');
-      db.initInstance(this.database.instanceName, this.database);
-      this.$db = db.getInstance(this.database.instanceName);
-    }
-  }
+	constructor() {
+		super(...arguments);
+		if (this.database) {
+			let db = this.app.getComponent('Database');
+			db.initInstance(this.database.instanceName, this.database);
+			this.$db = db.getInstance(this.database.instanceName);
+		}
+	}
 
-  getController(name) {
-    if (!this.__controllers[name]) {
-      let controllerPath = path.join(this.basePath, 'controllers', ucfirst(name) + 'Controller.js');
-      if (fs.existsSync(controllerPath)) {
-        this.__controllers[name] = require(controllerPath);
-      } else {
-        throw new Error(`Controller "${name}" in module "${this.constructor.name}" not found`);
-      }
-    }
+	getController(name) {
+		if (!this.__controllers[name]) {
+			let controllerPath = path.join(this.basePath, 'controllers', ucfirst(name) + 'Controller.js');
+			if (fs.existsSync(controllerPath)) {
+				this.__controllers[name] = require(controllerPath);
+			} else {
+				throw new Error(`Controller "${name}" in module "${this.constructor.name}" not found`);
+			}
+		}
 
-    return this.__controllers[name];
-  }
+		return this.__controllers[name];
+	}
 
-  async runAction(route) {
-    let {controller, action} = route;
-    let $controller = this.getController(controller);
-    if (!$controller[action + 'Action']) {
-      throw new Error(`Action "${action + 'Action'}" in controller "${controller}" not found`);
-    }
-    return await $controller[action + 'Action'](route, this);
-  }
+	async runAction(route) {
+		let {controller, action} = route;
+		let $controller = this.getController(controller);
+		if (!$controller[action + 'Action']) {
+			throw new Error(`Action "${action + 'Action'}" in controller "${controller}" not found`);
+		}
+		return await $controller[action + 'Action'](route, this);
+	}
 
-  async boot() {
-    if (this.$db) {
-      await this.initModels();
-    }
-  }
+	async boot() {
+		if (this.$db) {
+			await this.initModels();
+		}
+	}
 
-  async initModels() {
-    return this.app.getComponent('Database')
-      .initModels(path.join(this.basePath, 'models'), this.database.instanceName);
-  }
+	async initModels() {
+		return this.app.getComponent('Database')
+			.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
+	}
 
 }
