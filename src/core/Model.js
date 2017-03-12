@@ -114,7 +114,7 @@ export class Model {
 		let data = {};
 
 		this.attributes().forEach(attr => {
-			if (this.$hiddenFields.indexOf(attr) === -1) {
+			if (this.constructor.$hiddenFields.indexOf(attr) === -1) {
 				data[attr] = this[attr];
 			}
 		});
