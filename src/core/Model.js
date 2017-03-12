@@ -5,6 +5,8 @@ export class Model {
 
 	_errors = {};
 
+	static $hiddenFields = [];
+
 	constructor() {
 		this.$app = global.APP;
 	}
@@ -106,6 +108,18 @@ export class Model {
 		if (this.hasAttr(attr)) {
 			this[attr] = value;
 		}
+	}
+
+	toJSON() {
+		let data = {};
+
+		this.attributes().forEach(attr => {
+			if (this.$hiddenFields.indexOf(attr) === -1) {
+				data[attr] = this[attr];
+			}
+		});
+
+		return data;
 	}
 
 }
