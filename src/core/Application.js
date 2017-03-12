@@ -39,6 +39,16 @@ export class Application {
 		console.log('Running application'); // eslint-disable-line no-console
 		this.parseArgs();
 		this.loadConfig(configPath);
+
+		if (this.config.components) {
+			Object.keys(this.config.components).forEach(componentName => {
+				if (typeof this.config.components[componentName].Instance === 'function') {
+					this.components[componentName] = this.config.components[componentName].Instance;
+					delete this.config.components[componentName].Instance;
+				}
+			})
+		}
+
 		global.APP = this;
 		this.router = this.getComponent('Router');
 		this.request = this.getComponent('Request');
@@ -148,8 +158,6 @@ export class Application {
 		if (!this.__components[name]) {
 			if (typeof this.components[name] === 'function') {
 				this.__components[name] = new this.components[name](this.config.components[name]);
-			} else if (this.components[name] && typeof this.components[name].Instance === 'function') {
-				this.__components[name] = new this.components[name].Instance(this.components[name]);
 			} else {
 				throw new Error(`Component "${name}" did not resolve`);
 			}
