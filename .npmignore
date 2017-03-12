@@ -1,2 +1,3 @@
-dist/*
+example
+.idea
 node_modules/*
