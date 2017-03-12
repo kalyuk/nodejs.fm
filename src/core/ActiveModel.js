@@ -101,11 +101,40 @@ export class ActiveModel extends Model {
 		return this.getDbModel().sum(field, options);
 	}
 
-	async remove() {
-		return this.$instance.destroy();
-	}
 
 	$instance = null;
+
+	async afterSave() {
+
+	}
+
+	async afterCreate() {
+
+	}
+
+	async afterUpdate() {
+
+	}
+
+	async afterRemove() {
+
+	}
+
+	async beforeSave() {
+		return true;
+	}
+
+	async beforeCreate() {
+		return true;
+	}
+
+	async beforeUpdate() {
+		return true;
+	}
+
+	async beforeRemove() {
+		return true;
+	}
 
 	constructor() {
 		super(...arguments);
@@ -119,12 +148,34 @@ export class ActiveModel extends Model {
 
 	async save() {
 		let isValid = await this.validate();
-		if (isValid) {
+		if (isValid && await this.beforeSave()) {
 			let values = this.getValues();
+
 			if (this.isNewInstance()) {
-				return await this.$dbModel.create(values);
+				if (await this.beforeCreate()) {
+					this.$instance = await this.$dbModel.create(values);
+					await this.afterCreate();
+				} else {
+					return false;
+				}
+			} else {
+				if (await this.beforeUpdate()) {
+					this.$instance = await this.$instance.update(values).save();
+					await this.afterUpdate();
+					return false;
+				}
 			}
-			return await this.$instance.update(values).save();
+			await this.afterSave();
+			return this.$instance;
+		}
+		return false;
+	}
+
+	async remove() {
+		if (await this.beforeRemove()) {
+			await this.$instance.destroy();
+			await this.afterRemove();
+			return true;
 		}
 		return false;
 	}

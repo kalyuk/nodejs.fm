@@ -31,7 +31,7 @@ export class Model {
 	}
 
 	beforeValidate() {
-
+		return true;
 	}
 
 	clearErrors() {
@@ -51,6 +51,11 @@ export class Model {
 	}
 
 	async validate() {
+
+		if (await this.beforeValidate()) {
+
+		}
+
 		return new Promise(resolve => {
 			each(this.rules(), (rule, callback) => {
 				each(rule[0], async(attr, $callback) => {
