@@ -32,21 +32,25 @@ export async function upAction(params, {app}) {
 
 		migrations = migrations.map(migrate => `${migrate.name}-${migrate.moduleName}`);
 
-		let files = fs.readdirSync(migrationsPath);
+		try {
+			let files = fs.readdirSync(migrationsPath);
 
-		for (let q = 0; q < files.length; q++) {
-			let file = files[q];
+			for (let q = 0; q < files.length; q++) {
+				let file = files[q];
 
-			if (migrations.indexOf(`${file}-${modules[i]}`) === -1) {
-				let migration = require(path.join(migrationsPath, file));
+				if (migrations.indexOf(`${file}-${modules[i]}`) === -1) {
+					let migration = require(path.join(migrationsPath, file));
 
-				if (await migration.up()) {
-					let $migration = new MigrationModel();
-					$migration.load({moduleName: modules[i], name: file});
+					if (await migration.up()) {
+						let $migration = new MigrationModel();
+						$migration.load({moduleName: modules[i], name: file});
 
-					await $migration.save();
+						await $migration.save();
+					}
 				}
 			}
+		} catch(e){
+
 		}
 	}
 
