@@ -7,6 +7,7 @@ exports.ErrorHandler = require('./dist/core/ErrorHandler').ErrorHandler;
 exports.Model = require('./dist/core/Model').Model;
 exports.Module = require('./dist/core/Module').Module;
 exports.Request = require('./dist/core/Request').Request;
+exports.Security = require('./dist/core/Request').Security;
 exports.Response = require('./dist/core/Response').Response;
 exports.Router = require('./dist/core/Router').Router;
 exports.WebServer = require('./dist/core/WebServer').WebServer;

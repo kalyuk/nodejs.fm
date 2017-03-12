@@ -6,6 +6,7 @@ import {ErrorHandler} from './ErrorHandler';
 import {Database} from './Database';
 import {ConsoleRender} from './ConsoleRender';
 import {Request} from './Request';
+import {Security} from './Security';
 
 export class Application {
 	__webServer = null;
@@ -20,7 +21,8 @@ export class Application {
 		ErrorHandler,
 		Database,
 		ConsoleRender,
-		Request
+		Request,
+		Security
 	};
 
 	config = {
