@@ -149,18 +149,16 @@ export class ActiveModel extends Model {
 	async save() {
 		let isValid = await this.validate();
 		if (isValid && await this.beforeSave()) {
-			let values = this.getValues();
-
 			if (this.isNewInstance()) {
 				if (await this.beforeCreate()) {
-					this.$instance = await this.$dbModel.create(values);
+					this.$instance = await this.$dbModel.create(this.getValues());
 					await this.afterCreate();
 				} else {
 					return false;
 				}
 			} else {
 				if (await this.beforeUpdate()) {
-					this.$instance = await this.$instance.update(values).save();
+					this.$instance = await this.$instance.update(this.getValues()).save();
 					await this.afterUpdate();
 					return false;
 				}
