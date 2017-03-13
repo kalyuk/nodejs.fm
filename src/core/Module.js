@@ -40,9 +40,10 @@ export class Module extends Component {
 		if ($controller.BEHAVIORS) {
 			let behaviors = Object.keys($controller.BEHAVIORS);
 			for (let i = 0; i < behaviors.length; i++) {
-				let behavior = behaviors[i];
+				let behaviorName = behaviors[i];
+				let behavior = $controller.BEHAVIORS[behaviorName];
+				let $behavior = this.app.getBehavior(behaviorName);
 				if (!behavior.actions || behavior.actions.indexOf(route.action) !== -1) {
-					let $behavior = this.app.getBehavior(behaviors[i]);
 					let params = Object.assign({}, behavior, $behavior);
 					await $behavior.Instance(route, params, this);
 				}
