@@ -42,13 +42,16 @@ export class Module extends Component {
 			for (let i = 0; i < behaviors.length; i++) {
 				let behaviorName = behaviors[i];
 				let behavior = $controller.BEHAVIORS[behaviorName];
-				let $behavior = this.app.getBehavior(behaviorName);
 
-				for (let q = 0; q < behavior.rules.length; q++) {
-					let rule = $behavior.rules[q];
-					if (!rule.actions || rule.actions.indexOf(route.action) !== -1) {
-						let params = Object.assign({}, $behavior, rule);
-						await $behavior.Instance(route, params, this);
+				if (behavior.rules && behavior.rules.length) {
+					let $behavior = this.app.getBehavior(behaviorName);
+
+					for (let q = 0; q < behavior.rules.length; q++) {
+						let rule = behavior.rules[q];
+						if (!rule.actions || rule.actions.indexOf(route.action) !== -1) {
+							let params = Object.assign({}, $behavior, rule);
+							await $behavior.Instance(route, params, this);
+						}
 					}
 				}
 			}
