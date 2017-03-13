@@ -93,7 +93,7 @@ export class Application {
 		this.request.parse(req);
 		let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
 
-		route.headers = req.helpers;
+		route.headers = req.headers;
 		route.body = req.body;
 		route.query = req.query;
 
