@@ -43,9 +43,13 @@ export class Module extends Component {
 				let behaviorName = behaviors[i];
 				let behavior = $controller.BEHAVIORS[behaviorName];
 				let $behavior = this.app.getBehavior(behaviorName);
-				if (!behavior.actions || behavior.actions.indexOf(route.action) !== -1) {
-					let params = Object.assign({}, behavior, $behavior);
-					await $behavior.Instance(route, params, this);
+
+				for (let q = 0; q < behavior.rules.length; q++) {
+					let rule = $behavior.rules[q];
+					if (!rule.actions || rule.actions.indexOf(route.action) !== -1) {
+						let params = Object.assign({}, $behavior, rule);
+						await $behavior.Instance(route, params, this);
+					}
 				}
 			}
 		}
@@ -61,7 +65,7 @@ export class Module extends Component {
 
 	async initModels() {
 		return this.app.getComponent('Database')
-		.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
+			.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
 	}
 
 }
