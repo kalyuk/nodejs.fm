@@ -1,6 +1,6 @@
 {
   "name": "nodejs.fm",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "\"# nodejs.fm\"",
   "main": "index.js",
   "scripts": {

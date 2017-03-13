@@ -90,11 +90,13 @@ export class Application {
 	}
 
 	async handleRequest(req, res, isCommand = false) {
+		this.request.parse(req);
 		let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
 
-		if (req.body) {
-			route.body = req.body;
-		}
+		route.headers = req.helpers;
+		route.body = req.body;
+		route.query = req.query;
+
 
 		let response = !isCommand ?
 			this.getComponent('Response') : this.getComponent('ConsoleRender');
@@ -126,7 +128,6 @@ export class Application {
 					});
 
 					request.on('end', () => {
-						this.request.parse(request);
 						this.handleRequest(request, res);
 					});
 				} else {
