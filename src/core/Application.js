@@ -93,14 +93,14 @@ export class Application {
 		this.request.parse(req);
 		let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
 
-		route.headers = req.headers;
-		route.body = req.body;
-		route.query = req.query;
-
-
 		let response = !isCommand ?
 			this.getComponent('Response') : this.getComponent('ConsoleRender');
+
 		if (route) {
+			route.headers = req.headers;
+			route.body = req.body;
+			route.query = req.query;
+
 			try {
 				let result = await this.getModule(route.module).runAction(route);
 				return response.render(res, result);
