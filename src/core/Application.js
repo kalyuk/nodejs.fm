@@ -180,4 +180,11 @@ export class Application {
 
 		return this.__modules[name];
 	}
+
+	getBehavior(name) {
+		if (!this.config.behaviors[name]) {
+			throw new Error(`Behavior "${name}" not found`);
+		}
+		return this.config.behaviors[name];
+	}
 }

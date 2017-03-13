@@ -36,6 +36,19 @@ export class Module extends Component {
 		if (!$controller[action + 'Action']) {
 			throw new Error(`Action "${action + 'Action'}" in controller "${controller}" not found`);
 		}
+
+		if ($controller.BEHAVIORS) {
+			let behaviors = Object.keys($controller.BEHAVIORS);
+			for (let i = 0; i < behaviors.length; i++) {
+				let behavior = behaviors[i];
+				if (!behavior.actions || behavior.actions.indexOf(route.action) !== -1) {
+					let $behavior = this.app.getBehavior(behaviors[i]);
+					let params = Object.assign({}, behavior, $behavior);
+					await $behavior.Instance(route, params, this);
+				}
+			}
+		}
+
 		return await $controller[action + 'Action'](route, this);
 	}
 
@@ -47,7 +60,7 @@ export class Module extends Component {
 
 	async initModels() {
 		return this.app.getComponent('Database')
-			.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
+		.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
 	}
 
 }
