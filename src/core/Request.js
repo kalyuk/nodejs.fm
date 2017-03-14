@@ -1,7 +1,7 @@
-import {Component} from './Component';
+import Component from './Component';
 import query from 'querystring';
 
-export class Request extends Component {
+export default class Request extends Component {
 	parse(request) {
 
 		let $query = request.url.split('?');

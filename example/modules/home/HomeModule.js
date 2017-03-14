@@ -1,5 +1,5 @@
-import {Module} from '../../../src/core/Module';
+import {Module} from '../../../index';
 
-export class HomeModule extends Module {
+export default class HomeModule extends Module {
 	basePath = __dirname
 }

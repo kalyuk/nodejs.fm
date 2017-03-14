@@ -1,9 +1,9 @@
-import {Component} from './Component';
+import Component from './Component';
 import {ucfirst} from '../helpers/string';
 import fs from 'fs';
 import path from 'path';
 
-export class Module extends Component {
+export default class Module extends Component {
 
 	$db;
 	__controllers = {};
@@ -45,12 +45,11 @@ export class Module extends Component {
 
 				if (behavior.rules && behavior.rules.length) {
 					let $behavior = this.app.getBehavior(behaviorName);
-
-					for (let q = 0; q < behavior.rules.length; q++) {
+					for (let q = 0; q < behavior.rules.length; q++) { // eslint-disable-line
 						let rule = behavior.rules[q];
-						if (!rule.actions || rule.actions.indexOf(route.action) !== -1) {
-							let params = Object.assign({}, $behavior, rule);
-							await $behavior.Instance(route, params, this);
+						if (!rule.actions || rule.actions.indexOf(route.action) !== -1) { // eslint-disable-line
+							let params = Object.assign({}, $behavior.config, rule);
+							await $behavior.fn(route, params, this);
 						}
 					}
 				}
@@ -68,7 +67,7 @@ export class Module extends Component {
 
 	async initModels() {
 		return this.app.getComponent('Database')
-			.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
+		.initModels(path.join(this.basePath, 'models'), this.database.instanceName);
 	}
 
 }

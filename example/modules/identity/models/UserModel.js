@@ -1,4 +1,4 @@
-import {ActiveModel} from '../../../../src/core/ActiveModel';
+import {ActiveModel} from '../../../../index';
 
 export default class UserModel extends ActiveModel {
 

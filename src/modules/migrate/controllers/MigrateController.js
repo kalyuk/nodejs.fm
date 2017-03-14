@@ -3,11 +3,11 @@ import path from 'path';
 import MigrationModel from '../models/MigrationModel';
 
 const MIGRATION_TEMPLATE = `export async function up(){
-  return false;
+	return false;
 }
 
 export async function down(){
-  return false;
+	return false;
 }`;
 
 
@@ -49,7 +49,7 @@ export async function upAction(params, {app}) {
 					}
 				}
 			}
-		} catch(e){
+		} catch (e) {
 
 		}
 	}

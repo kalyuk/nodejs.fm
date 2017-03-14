@@ -1,6 +1,6 @@
-import {Component} from './Component';
+import Component from './Component';
 
-export class ConsoleRender extends Component {
+export default class ConsoleRender extends Component {
 	render(response, data) {
 		console.log(data.content);
 	}

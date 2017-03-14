@@ -1,7 +1,7 @@
 import crypto from 'crypto';
-import {Component} from './Component';
+import Component from './Component';
 
-export class Security extends Component {
+export default class Security extends Component {
 
 	getAlgorithm() {
 		return this.algorithm || 'sha512';

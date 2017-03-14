@@ -1,4 +1,4 @@
-import {Model} from '../../../../src/core/Model';
+import {Model} from '../../../../index';
 
 export default class LoginForm extends Model {
 

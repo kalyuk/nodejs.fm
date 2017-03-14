@@ -1,6 +1,6 @@
-import {Component} from './Component';
+import Component from './Component';
 
-export class Router extends Component {
+export default class Router extends Component {
 
 	constructor() {
 		super(...arguments);

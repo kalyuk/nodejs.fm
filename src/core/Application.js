@@ -1,17 +1,18 @@
 import fs from 'fs';
-import {WebServer} from './WebServer';
-import {Router} from './Router';
-import {Response} from './Response';
-import {ErrorHandler} from './ErrorHandler';
-import {Database} from './Database';
-import {ConsoleRender} from './ConsoleRender';
-import {Request} from './Request';
-import {Security} from './Security';
+import WebServer from './WebServer';
+import Router from './Router';
+import Response from './Response';
+import ErrorHandler from './ErrorHandler';
+import Database from './Database';
+import ConsoleRender from './ConsoleRender';
+import Request from './Request';
+import Security from './Security';
 
-export class Application {
+export default class Application {
 	__webServer = null;
 	__components = {};
 	__modules = {};
+	__behaviors = {};
 	__boot = null;
 
 	components = {
@@ -39,15 +40,6 @@ export class Application {
 		console.log('Running application'); // eslint-disable-line no-console
 		this.parseArgs();
 		this.loadConfig(configPath);
-
-		if (this.config.components) {
-			Object.keys(this.config.components).forEach(componentName => {
-				if (typeof this.config.components[componentName].Instance === 'function') {
-					this.components[componentName] = this.config.components[componentName].Instance;
-					delete this.config.components[componentName].Instance;
-				}
-			})
-		}
 
 		global.APP = this;
 		this.router = this.getComponent('Router');
@@ -94,7 +86,7 @@ export class Application {
 		let route = this.router.match(req.method.toLowerCase(), req.url.toLowerCase());
 
 		let response = !isCommand ?
-			this.getComponent('Response') : this.getComponent('ConsoleRender');
+		this.getComponent('Response') : this.getComponent('ConsoleRender');
 
 		if (route) {
 			route.headers = req.headers;
@@ -153,12 +145,15 @@ export class Application {
 	}
 
 	getComponent(name) {
-		if (!this.components[name]) {
+		if (!this.components[name] && !this.config.components[name]) {
 			throw new Error(`Component "${name}" not found`);
 		}
 		if (!this.__components[name]) {
 			if (typeof this.components[name] === 'function') {
 				this.__components[name] = new this.components[name](this.config.components[name]);
+			} else if (this.config.components[name].instance) {
+				let Instance = require(this.config.components[name].instance).default;
+				this.components[name] = new Instance(this.config.components[name]);
 			} else {
 				throw new Error(`Component "${name}" did not resolve`);
 			}
@@ -172,8 +167,9 @@ export class Application {
 		}
 
 		if (!this.__modules[name]) {
-			if (this.config.modules[name] && typeof this.config.modules[name].Instance === 'function') {
-				this.__modules[name] = new this.config.modules[name].Instance(this.config.modules[name]);
+			if (this.config.modules[name] && this.config.modules[name].instance) {
+				let Instance = require(this.config.modules[name].instance).default;
+				this.__modules[name] = new Instance(this.config.modules[name]);
 			} else {
 				throw new Error(`Module "${name}" did not resolve`);
 			}
@@ -186,6 +182,18 @@ export class Application {
 		if (!this.config.behaviors[name]) {
 			throw new Error(`Behavior "${name}" not found`);
 		}
-		return this.config.behaviors[name];
+
+		if (!this.__behaviors[name]) {
+			if (!this.config.behaviors[name].instance) {
+				this.__behaviors[name] = require(this.config.behaviors[name].instance).default;
+			} else {
+				throw new Error(`Behaviors "${name}" did not resolve`);
+			}
+		}
+
+		return {
+			fn: this.__behaviors[name],
+			config: this.config.behaviors[name]
+		};
 	}
 }

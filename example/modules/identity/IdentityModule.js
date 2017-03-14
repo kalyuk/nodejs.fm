@@ -1,5 +1,5 @@
-import {Module} from '../../../src/core/Module';
+import {Module} from '../../../index';
 
-export class IdentityModule extends Module {
+export default class IdentityModule extends Module {
 	basePath = __dirname;
 }

@@ -1,6 +1,6 @@
-import {Component} from './Component';
+import Component from './Component';
 
-export class ErrorHandler extends Component {
+export default class ErrorHandler extends Component {
 
 	constructor() {
 		super(...arguments);

@@ -1,7 +1,7 @@
 import {merge} from 'lodash';
-import {Component} from './Component';
+import Component from './Component';
 
-export class Response extends Component {
+export default class Response extends Component {
 	render(response, $data) {
 		let result = merge({
 			headers: {

@@ -1,4 +1,4 @@
-import {ActiveModel} from '../../../core/ActiveModel';
+import ActiveModel from '../../../core/ActiveModel';
 
 export default class MigrationModel extends ActiveModel {
 

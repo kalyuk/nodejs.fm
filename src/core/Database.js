@@ -1,9 +1,10 @@
 import Sequelize from 'sequelize';
 import path from 'path';
 import fs from 'fs';
-import {Component} from './Component';
 
-export class Database extends Component {
+import Component from './Component';
+
+export default class Database extends Component {
 
 	__instances = {};
 

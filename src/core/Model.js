@@ -1,7 +1,7 @@
 import Validator from 'Validator';
 import each from 'async/each';
 
-export class Model {
+export default class Model {
 
 	_errors = {};
 

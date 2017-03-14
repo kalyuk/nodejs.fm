@@ -1,12 +1,23 @@
 import path from 'path';
-import {HomeModule} from '../modules/home/HomeModule';
-import {IdentityModule} from '../modules/identity/IdentityModule';
 
 export default function () {
 	return {
 		default: {
 			basePath: path.join(__dirname, '..'),
+			behaviors: {
+				access: {
+					instance: path.join(__dirname, '..', 'behavior', 'AccessBehavior')
+				}
+			},
 			components: {
+				Jwt: {
+					instance: path.join(__dirname, '..', 'component', 'Jwt'),
+					secret: '94mf7f94nrbothg',
+					timeLive: {
+						unit: 8,
+						amount: 'hour'
+					}
+				},
 				Database: {
 					instance: {
 						app: {
@@ -43,10 +54,10 @@ export default function () {
 			},
 			modules: {
 				home: {
-					Instance: HomeModule
+					instance: path.join(__dirname, '..', 'modules', 'home', 'HomeModule')
 				},
 				identity: {
-					Instance: IdentityModule,
+					instance: path.join(__dirname, '..', 'modules', 'identity', 'IdentityModule'),
 					database: {
 						instanceName: 'identityDb',
 						database: 'nodejs.fm-user',

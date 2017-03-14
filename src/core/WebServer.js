@@ -1,10 +1,10 @@
 import http from 'http';
-import {Component} from './Component';
+import Component from './Component';
 
 export const EVENT_REQUEST = 'request';
 export const EVENT_CLOSE = 'close';
 
-export class WebServer extends Component {
+export default class WebServer extends Component {
 
 	__server = null;
 

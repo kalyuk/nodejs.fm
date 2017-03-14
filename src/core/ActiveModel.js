@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
-import {Model} from './Model';
+import Model from './Model';
 
-export class ActiveModel extends Model {
+export default class ActiveModel extends Model {
 
 	static TYPE_STRING = Sequelize.STRING;
 	static TYPE_STRING_BINARY = Sequelize.STRING.BINARY;
